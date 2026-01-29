@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "sanojkv/java-app"
-        SONAR_HOST = "http://localhost:9000"
+        SONAR_HOST = "http://192.168.152.128:9000"
     }
 
     stages {
@@ -21,16 +21,18 @@ pipeline {
         }
 
         stage('Code Quality - SonarQube') {
-            steps {
-                withSonarQubeEnv('sonarqube-server') {
-                    sh '''
-                      mvn sonar:sonar \
-                      -Dsonar.projectKey=java-app \
-                      -Dsonar.host.url=$SONAR_HOST
-                    '''
-                }
-            }
+         steps {
+           withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+            sh '''
+              mvn org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar \
+              -Dsonar.projectKey=java-app \
+              -Dsonar.projectName=java-app \
+              -Dsonar.host.url=http://192.168.152.128:9000 \
+              -Dsonar.login=$SONAR_TOKEN
+            '''
         }
+    }
+}
 
         stage('Build Package') {
             steps {
