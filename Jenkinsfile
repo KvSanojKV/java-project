@@ -11,12 +11,8 @@ pipeline {
     }
 
     stages {
-
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/kvsanojkv/java-project.git'
-            }
-        }
+          
+        
 
         stage('Build & Test') {
             steps {
